@@ -1,45 +1,22 @@
-FROM ubuntu:latest
+FROM adoptopenjdk/openjdk8:x86_64-alpine-jdk8u232-b09
 # ------------------------------------------------------
 # --- Environments and base directories
 ENV ANDROID_HOME="/home/stolas69/sdk/android" \
     FLUTTER_HOME="/home/stolas69/sdk/flutter" \
     GRADLE_HOME="/home/stolas69/tools/gradle" \
     MAVEN_HOME="/home/stolas69/tools/maven" \
-    USER_HOME="/home/stolas69" \
-    DEBIAN_FRONTEND="noninteractive" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8" \
-    JAVA_VERSION="jdk8u232-b09"
-RUN apt-get update -qq \
-    # --- Disable installing reccommended and suggested packages by default
-    # --- to keep the image minimal
-    && echo 'APT::Install-Recommends "false";\nAPT::Install-Suggests "false";' | tee /etc/apt/apt.conf.d/99norecommend \
-    # --- Generate en_US.UTF-8 locales
-    && apt-get install -y locales \
-    && locale-gen en_US.UTF-8 \
-    # --- Install required packages
-    && apt-get -y install git curl ca-certificates unzip xz-utils make jq \
-    && dpkg --add-architecture i386 \
-    && apt-get update -qq \
-    && apt-get install -y libc6:i386 libstdc++6:i386 libgcc1:i386 libncurses5:i386 libz1:i386 net-tools \
-    && apt-get clean
+    USER_HOME="/home/stolas69"
 # ------------------------------------------------------
-# --- Install adoptjdk
-RUN set -eux; \
-    ESUM='7b7884f2eb2ba2d47f4c0bf3bb1a2a95b73a3a7734bd47ebf9798483a7bcc423'; \
-    ARCHIVE='OpenJDK8U-jdk_x64_linux_hotspot_8u232b09.tar.gz'; \
-    BINARY_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/${ARCHIVE}"; \
-    curl -LfsSo /tmp/${ARCHIVE} ${BINARY_URL}; \
-    echo "${ESUM} */tmp/${ARCHIVE}" | sha256sum -c -; \
-    mkdir -p /opt/java/openjdk; \
-    tar -xzf /tmp/${ARCHIVE} --strip-components=1 -C /opt/java/openjdk; \
-    rm /tmp/${ARCHIVE}
-ENV JAVA_HOME=/opt/java/openjdk \
-    PATH="/opt/java/openjdk/bin:$PATH"
+# --- Install required tools
+RUN apk update; \
+    apk add --no-cache bash curl git libstdc++ unzip ca-certificates make jq; \
+    update-ca-certificates; \
+    # --- Configure git
+    git config --global user.email "docker@swedspot.com"; \
+    git config --global user.name "Docker"
 # ------------------------------------------------------
 # --- Create user and home directory
-RUN useradd --create-home --shell /bin/bash stolas69
+RUN adduser -D --shell /bin/bash stolas69
 # --- Run the rest of commands as user stolas69
 USER stolas69
 WORKDIR ${USER_HOME}
@@ -51,7 +28,7 @@ RUN set -eux; \
     ARCHIVE='sdk-tools-linux-4333796.zip'; \
     BINARY_URL="https://dl.google.com/android/repository/${ARCHIVE}"; \
     curl -LfsSo ${ARCHIVE} ${BINARY_URL}; \
-    echo "${ESUM} *${USER_HOME}/${ARCHIVE}" | sha256sum -c -; \
+    echo "${ESUM} *${USER_HOME}/${ARCHIVE}" | sha256sum -c -;\
     unzip -q ${ARCHIVE} -d ${ANDROID_HOME}; \
     rm ${ARCHIVE}; \
     # ------------------------------------------------------
@@ -99,16 +76,9 @@ RUN set -eux; \
     rm ${ARCHIVE}
 # ------------------------------------------------------
 # --- Install Flutter
-RUN set -eux; \
-    ESUM='d792c92895623da35e1a9ccd8bc2fe84c81dd72c2c54073f56fe70625866d800'; \
-    ARCHIVE='flutter_linux_v1.12.13+hotfix.5-stable.tar.xz'; \
-    BINARY_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/${ARCHIVE}"; \
-    mkdir -p ${FLUTTER_HOME}; \
-    curl -LfsSo ${ARCHIVE} ${BINARY_URL}; \
-    echo "${ESUM} *${USER_HOME}/${ARCHIVE}" | sha256sum -c -; \
-    tar -xJf ${ARCHIVE} --strip-components=1 -C ${FLUTTER_HOME}; \
-    rm ${ARCHIVE}; \
-    ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
-    ${FLUTTER_HOME}/bin/flutter precache
+RUN mkdir -p ${FLUTTER_HOME}; \
+   git clone -b stable https://github.com/flutter/flutter.git ${FLUTTER_HOME}; \
+   ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
+   ${FLUTTER_HOME}/bin/flutter precache
 # ------------------------------------------------------
-ENV PATH "${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${GRADLE_HOME}/bin:${FLUTTER_HOME}/bin:${MAVEN_HOME}/bin:${PATH}"
+ENV PATH "${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${GRADLE_HOME}/bin:${FLUTTER_HOME}/bin:${PATH}"
