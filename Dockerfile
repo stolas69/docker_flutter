@@ -110,9 +110,5 @@ RUN set -eux; \
     rm ${ARCHIVE}; \
     ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
     ${FLUTTER_HOME}/bin/flutter precache
-#RUN mkdir -p ${FLUTTER_HOME}; \
-#   git clone -b stable https://github.com/flutter/flutter.git ${FLUTTER_HOME}; \
-#   ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
-#   ${FLUTTER_HOME}/bin/flutter precache
 # ------------------------------------------------------
 ENV PATH "${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${GRADLE_HOME}/bin:${FLUTTER_HOME}/bin:${MAVEN_HOME}/bin:${PATH}"
