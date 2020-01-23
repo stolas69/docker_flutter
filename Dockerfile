@@ -76,9 +76,16 @@ RUN set -eux; \
     rm ${ARCHIVE}
 # ------------------------------------------------------
 # --- Install Flutter
-RUN mkdir -p ${FLUTTER_HOME}; \
-   git clone -b stable https://github.com/flutter/flutter.git ${FLUTTER_HOME}; \
-   ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
-   ${FLUTTER_HOME}/bin/flutter precache
+RUN set -eux; \
+    ESUM='d792c92895623da35e1a9ccd8bc2fe84c81dd72c2c54073f56fe70625866d800'; \
+    ARCHIVE='flutter_linux_v1.12.13+hotfix.5-stable.tar.xz'; \
+    BINARY_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/${ARCHIVE}"; \
+    mkdir -p ${FLUTTER_HOME}; \
+    curl -LfsSo ${ARCHIVE} ${BINARY_URL}; \
+    echo "${ESUM} *${USER_HOME}/${ARCHIVE}" | sha256sum -c -; \
+    tar -xJf ${ARCHIVE} --strip-components=1 -C ${FLUTTER_HOME}; \
+    rm ${ARCHIVE}; \
+    ${FLUTTER_HOME}/bin/flutter config --no-analytics; \
+    ${FLUTTER_HOME}/bin/flutter precache
 # ------------------------------------------------------
 ENV PATH "${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${GRADLE_HOME}/bin:${FLUTTER_HOME}/bin:${PATH}"
