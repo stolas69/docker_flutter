@@ -1,4 +1,4 @@
-Flutter image based on Ubuntu 18.04 LTS, containing the following:
+Flutter image based on Alpine Linux, containing the following:
 
 1. AdoptOpenJDK jdk8u232-b09
 2. Android SDK: 
@@ -13,4 +13,4 @@ Flutter image based on Ubuntu 18.04 LTS, containing the following:
 
 3. Gradle 6.1
 4. Apache Maven v3.6.3
-5. Flutter v1.12.13+hotfix.5-stable
+5. Flutter (builds the latest stable branch from git)
