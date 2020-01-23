@@ -1,4 +1,4 @@
-Flutter image based on Ubuntu 18.04 LTS/Alpine Linux, containing the following:
+Flutter image based on Alpine Linux, containing the following:
 
 1. AdoptOpenJDK jdk8u232-b09
 2. Android SDK: 
