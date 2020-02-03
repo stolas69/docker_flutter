@@ -21,6 +21,17 @@ RUN adduser -D --shell /bin/bash stolas69
 USER stolas69
 WORKDIR ${USER_HOME}
 # ------------------------------------------------------
+# --- Create a ssh config file to avoid broken pipe on git clone
+RUN mkdir ${USER_HOME}/.ssh; \
+    echo '\n\
+Host *\n\
+   ServerAliveInterval 600\n\
+   TCPKeepAlive yes\n\
+   IPQoS=throughput\n\
+' >> ${USER_HOME}/.ssh/config; \
+   chmod 0400 ${USER_HOME}/.ssh/config; \
+   chmod 0700 ${USER_HOME}/.ssh
+# ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
 RUN set -eux; \
     mkdir -p ${ANDROID_HOME}; \
