@@ -9,11 +9,8 @@ ENV ANDROID_HOME="/home/stolas69/sdk/android" \
 # ------------------------------------------------------
 # --- Install required tools
 RUN apk update; \
-    apk add --no-cache bash curl git libstdc++ unzip ca-certificates make jq; \
-    update-ca-certificates; \
-    # --- Configure git
-    git config --global user.email "docker@swedspot.com"; \
-    git config --global user.name "Docker"
+    apk add --no-cache bash ca-certificates curl git jq libstdc++ make tar unzip; \
+    update-ca-certificates
 # ------------------------------------------------------
 # --- Create user and home directory
 RUN adduser -D --shell /bin/bash stolas69
@@ -30,7 +27,11 @@ Host *\n\
    IPQoS=throughput\n\
 ' >> ${USER_HOME}/.ssh/config; \
    chmod 0400 ${USER_HOME}/.ssh/config; \
-   chmod 0700 ${USER_HOME}/.ssh
+   chmod 0700 ${USER_HOME}/.ssh; \
+   # --- Configure git
+   git config --global user.email "docker@swedspot.com"; \
+   git config --global user.name "Docker"; \
+   git config --global http.postBuffer 10M
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
 RUN set -eux; \
