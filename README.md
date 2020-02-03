@@ -13,4 +13,9 @@ Flutter image based on Ubuntu 18.04 LTS, containing the following:
 
 3. Gradle 6.1
 4. Apache Maven v3.6.3
-5. Flutter v1.12.13+hotfix.5-stable
+5. Flutter 
+
+   * 1.12.13+hotfix.7 • channel stable • https://github.com/flutter/flutter.git
+   * Framework • revision 9f5ff2306b • 2020-01-26 22:38:26 -0800
+   * Engine • revision a67792536c
+   * Tools • Dart 2.7.0
