@@ -100,8 +100,8 @@ RUN set -eux; \
 # ------------------------------------------------------
 # --- Install Flutter
 RUN set -eux; \
-    ESUM='d792c92895623da35e1a9ccd8bc2fe84c81dd72c2c54073f56fe70625866d800'; \
-    ARCHIVE='flutter_linux_v1.12.13+hotfix.5-stable.tar.xz'; \
+    ESUM='5fc94d7ff350b551da7ce5703199a815d24afda2849de6290836b71ee006ebd2'; \
+    ARCHIVE='flutter_linux_v1.12.13+hotfix.7-stable.tar.xz'; \
     BINARY_URL="https://storage.googleapis.com/flutter_infra/releases/stable/linux/${ARCHIVE}"; \
     mkdir -p ${FLUTTER_HOME}; \
     curl -LfsSo ${ARCHIVE} ${BINARY_URL}; \
